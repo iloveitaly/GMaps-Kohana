@@ -23,7 +23,7 @@ class Gmaps_Demo_Controller extends Controller {
 
 		// Set the map center point
 		$map->center(0, 0, 1)->controls('large')->types('G_PHYSICAL_MAP', 'add');
-
+		
 		// Add a custom marker icon
 		$map->add_icon('tinyIcon', array
 		(
@@ -34,9 +34,9 @@ class Gmaps_Demo_Controller extends Controller {
 			'iconAnchor' => array('6', '20'),
 			'infoWindowAnchor' => array('5', '1')
 	    ));
-
+		
 		// Add a new marker
-		$map->add_marker(44.9801, -93.2519, '<strong>Minneapolis, MN</strong><p>Hello world!</p>', array('icon' => 'tinyIcon', 'draggable' => true, 'bouncy' => true));
+		$map->add_marker(44.9801, -93.2519, '<strong>Minneapolis, MN</strong><p>Hello world!</p>'/*, array('icon' => 'tinyIcon', 'draggable' => true, 'bouncy' => true)*/);
 
 		View::factory('gmaps/api_demo')->set(array('api_url' => Gmap::api_url(), 'map' => $map->render()))->render(TRUE);
 	}

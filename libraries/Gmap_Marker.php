@@ -35,9 +35,8 @@ class Gmap_Marker_Core {
 	 * @param array $options marker options
 	 * @return  void
 	 */
-	public function __construct($lat, $lon, $html, $options = array())
-	{
-		if ( ! is_numeric($lat) OR ! is_numeric($lon))
+	public function __construct($lat, $lon, $html, $options = array()) {
+		if (! is_numeric($lat) OR ! is_numeric($lon))
 			throw new Kohana_Exception('gmaps.invalid_marker', $lat, $lon);
 
 		// Set the latitude and longitude

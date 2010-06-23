@@ -71,8 +71,8 @@ class Gmap_Core {
 	*
 	* @return  string
 	*/
-	public static function api_url() {
-		return 'http://'.Kohana::config('gmaps.api_domain').'/maps/api/js?sensor=false';
+	public static function api_url($component = '/maps/api/js') {
+		return 'http://'.Kohana::config('gmaps.api_domain').$component.'?sensor=false';
 	}
 	
 	/**
@@ -288,7 +288,7 @@ class Gmap_Core {
 	 */
 	public function add_icon($name, array $options)
 	{
-		// Add a new cusotm icon
+		// Add a new custom icon
 		$this->icons[] = new Gmap_Icon($name, $options);
 
 		return $this;
@@ -304,10 +304,8 @@ class Gmap_Core {
 	 * @param array $options marker options
 	 * @return object
 	 */
-	public function add_marker($lat, $lon, $html = '', $options = array())
-	{
-		// Add a new marker
-		$this->markers[] = new Gmap_Marker($lat, $lon, $html, $options);
+	public function add_marker($lat, $lon, $html = '', $options = array()) {
+		$this->markers[] = array_merge(array('lat' => $lat, 'lon' => $lon, 'html' => $html), $options);
 
 		return $this;
 	}
@@ -331,5 +329,4 @@ class Gmap_Core {
 		// Render the Javascript
 		return View::factory($template, $data)->render();
 	}
-
-} // End Gmap
+}
