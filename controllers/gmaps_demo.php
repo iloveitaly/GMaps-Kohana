@@ -15,12 +15,10 @@ class Gmaps_Demo_Controller extends Controller {
 	// Do not allow to run in production
 	const ALLOW_PRODUCTION = FALSE;
 
-	public function index()
-	{
-		// Create a new Gmap
-		$map = new Gmap('map', array
-		(
-			'ScrollWheelZoom' => TRUE,
+	public function index() {
+		
+		$map = new Gmap('map', array(
+			'mapTypeControl' => FALSE,
 		));
 
 		// Set the map center point

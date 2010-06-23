@@ -16,15 +16,11 @@ class Gmap_Core {
 	protected $options;
 	protected $center;
 	protected $control;
-	protected $overview_control;
 	protected $type_control = FALSE;
 
 	// Map types
 	protected $types = array();
-	protected $default_types = array
-	(
-		'G_NORMAL_MAP','G_SATELLITE_MAP','G_HYBRID_MAP','G_PHYSICAL_MAP'
-	);
+	protected $default_types = array('ROADMAP','SATELLITE','HYBRID','TERRAIN');
 	
 	// Markers icons
 	protected $icons = array();
@@ -36,54 +32,56 @@ class Gmap_Core {
 	 * Set the GMap center point.
 	 *
 	 * @param string $id HTML map id attribute
-	 * @param array $options array of GMap constructor options
+	 * @param array $options array of GMap constructor options. List of options available here: http://code.google.com/apis/maps/documentation/javascript/reference.html#MapOptions
 	 * @return void
 	 */
-	public function __construct($id = 'map', $options = NULL)
-	{
-		// Set map ID and options
+	public function __construct($id = 'map', $options = array()) {
+		// set the default center
+		$this->center(0, 0);
+		
 		$this->id = $id;
-		$this->options = new Gmap_Options((array) $options);
+		$this->options = $options;
+		
+		/*
+		backgroundColor	string	Color used for the background of the Map div. This color will be visible when tiles have not yet loaded as the user pans. This option can only be set when the map is initialized.
+		center	LatLng	The initial Map center. Required.
+		disableDefaultUI	boolean	Enables/disables all default UI. May be overridden individually.
+		disableDoubleClickZoom	boolean	Enables/disables zoom and center on double click. Enabled by default.
+		draggable	boolean	If false, prevents the map from being dragged. Dragging is enabled by default.
+		draggableCursor	string	The name or url of the cursor to display on a draggable object.
+		draggingCursor	string	The name or url of the cursor to display when an object is dragging.
+		keyboardShortcuts	boolean	If false, prevents the map from being controlled by the keyboard. Keyboard shortcuts are enabled by default.
+		mapTypeControl	boolean	The initial enabled/disabled state of the Map type control.
+		mapTypeControlOptions	MapTypeControlOptions	The initial display options for the Map type control.
+		mapTypeId	MapTypeId	The initial Map mapTypeId. Required.
+		navigationControl	boolean	The initial enabled/disabled state of the navigation control.
+		navigationControlOptions	NavigationControlOptions	The initial display options for the navigation control.
+		noClear	boolean	If true, do not clear the contents of the Map div.
+		scaleControl	boolean	The initial enabled/disabled state of the scale control.
+		scaleControlOptions	ScaleControlOptions	The initial display options for the scale control.
+		scrollwheel	boolean	If false, disables scrollwheel zooming on the map. The scrollwheel is enabled by default.
+		streetView	StreetViewPanorama	A StreetViewPanorama to display when the Street View pegman is dropped on the map. If no panorama is specified, a default StreetViewPanorama will be displayed in the map's div when the pegman is dropped.
+		streetViewControl	boolean	The initial enabled/disabled state of the Street View pegman control.
+		zoom	Number
+		*/
 	}
 
 	/**
-	 * Return GMap javascript url
-	 *
-	 * @param   string  API component
-	 * @param   array   API parameters
-	 * @return  string
-	 */
-	 public static function api_url($component = 'jsapi', $parameters = NULL, $separator = '&amp;')
-	 {
-		if (empty($parameters['ie']))
-		{
-			// Set input encoding to UTF-8
-			$parameters['ie'] = 'utf-8';
-		}
-
-		if (empty($parameters['oe']))
-		{
-			// Set ouput encoding to input encoding
-			$parameters['oe'] = $parameters['ie'];
-		}
-
-		if (empty($parameters['key']))
-		{
-			// Set the API key last
-			$parameters['key'] = Kohana::config('gmaps.api_key');
-		}
-
-		return 'http://'.Kohana::config('gmaps.api_domain').'/'.$component.'?'.http_build_query($parameters, '', $separator);
-	 }
-
+	* Return GMap javascript url
+	*
+	* @return  string
+	*/
+	public static function api_url() {
+		return 'http://'.Kohana::config('gmaps.api_domain').'/maps/api/js?sensor=false';
+	}
+	
 	/**
 	 * Retrieves the latitude and longitude of an address.
 	 *
 	 * @param string $address address
 	 * @return array longitude, latitude
 	 */
-	public static function address_to_ll($address)
-	{
+	public static function address_to_ll($address) {
 		$lat = NULL;
 		$lon = NULL;
 
@@ -104,8 +102,7 @@ class Gmap_Core {
 	 * @param string $address adress
 	 * @return object SimpleXML
 	 */
-	public static function address_to_xml($address)
-	{
+	public static function address_to_xml($address) {
 		static $cache;
 
 		// Load Cache
@@ -189,8 +186,7 @@ class Gmap_Core {
 	 * @param integer $height map height
 	 * @return string
 	 */
-	public static function static_map($lat = 0, $lon = 0, $zoom = 6, $type = NULL, $width = 300, $height = 300)
-	{
+	public static function static_map($lat = 0, $lon = 0, $zoom = 6, $type = NULL, $width = 300, $height = 300) {
 		// Valid map types
 		$types = array('roadmap', 'mobile');
 
@@ -236,10 +232,9 @@ class Gmap_Core {
 	 * @param string $type default map type
 	 * @return object
 	 */
-	public function center($lat, $lon, $zoom = 6, $type = 'G_NORMAL_MAP')
-	{
+	public function center($lat, $lon, $zoom = 6, $type = 'ROADMAP') {
 		$zoom = max(0, min(19, abs($zoom)));
-		$type = ($type != 'G_NORMAL_MAP' AND in_array($type, $this->default_types, true)) ? $type : 'G_NORMAL_MAP';
+		$type = ($type != 'ROADMAP' AND in_array($type, $this->default_types, true)) ? $type : 'ROADMAP';
 
 		// Set center location, zoom and default map type
 		$this->center = array($lat, $lon, $zoom, $type);
@@ -254,26 +249,9 @@ class Gmap_Core {
 	 * @param string $size small or large
 	 * @return object
 	 */
-	public function controls($size = NULL)
-	{
+	public function controls($size = NULL) {
 		// Set the control type
 		$this->control = (strtolower($size) == 'small') ? 'Small' : 'Large';
-
-		return $this;
-	}
-
-	/**
-	 * Set the GMap overview map.
-	 *
-	 * @chainable
-	 * @param integer $width width
-	 * @param integer $height height
-	 * @return object
-	 */
-	public function overview($width = '', $height = '')
-	{
-		$size = (is_int($width) AND is_int($height)) ? 'new GSize('.$width.','.$height.')' : '';
-		$this->overview_control = 'map.addControl(new google.maps.OverviewMapControl('.$size.'));';
 
 		return $this;
 	}
@@ -341,44 +319,14 @@ class Gmap_Core {
 	 * @param array $extra extra fields passed to the template
 	 * @return string
 	 */
-	public function render($template = 'gmaps/javascript', $extra = array())
-	{
-		// Latitude, longitude, zoom and default map type
-		list ($lat, $lon, $zoom, $default_type) = $this->center;
-
-		// Map
-		$map = 'var map = new google.maps.Map2(document.getElementById("'.$this->id.'"));';
-
-		// Map controls
-		$controls[] = empty($this->control) ? '' : 'map.addControl(new google.maps.'.$this->control.'MapControl());';
-
-		// Map Types
-		if ($this->type_control === TRUE)
-		{
-			if (count($this->types) > 0)
-			{
-				foreach($this->types as $type => $action)
-					$controls[] = 'map.'.$action.'MapType('.$type.');';
-			}
-
-			$controls[] = 'map.addControl(new google.maps.MapTypeControl());';
-		}
-
-		if ( ! empty($this->overview_control))
-			$controls[] = $this->overview_control;
-
-		// Map centering
-		$center = 'map.setCenter(new google.maps.LatLng('.$lat.', '.$lon.'), '.$zoom.', '.$default_type.');';
-		
-		$data = array_merge($extra, array
-			(
-				'map' => $map,
-				'options' => $this->options,
-				'controls' => implode("\n", $controls),
-				'center' => $center,
-				'icons' => $this->icons,
-				'markers' => $this->markers,
-			));
+	public function render($template = 'gmaps/javascript') {
+		$data = array(
+			'id' => $this->id,
+			'center' => $this->center,
+			'options' => $this->options,
+			'icons' => $this->icons,
+			'markers' => $this->markers,
+		);
 
 		// Render the Javascript
 		return View::factory($template, $data)->render();
