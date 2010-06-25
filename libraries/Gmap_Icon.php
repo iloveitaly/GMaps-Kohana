@@ -84,13 +84,11 @@ class Gmap_Icon_Core {
 		}
 	}
 	
-	public function set_url($key, $url)
-	{
-		$this->options[$key] = (valid::url($url)) ? '"'.$url.'";' : '"'.url::site($url).'";';
+	public function set_url($key, $url) {
+		$this->options[$key] = valid::url($url) ? '"'.$url.'";' : '"'.url::site($url).'";';
 	}
 	
-	public function set_size($key, $val)
-	{
+	public function set_size($key, $val) {
 		$this->options[$key] = 'new google.maps.Size('.implode(',', $val).');';
 	}
 	

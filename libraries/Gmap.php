@@ -71,8 +71,12 @@ class Gmap_Core {
 	*
 	* @return  string
 	*/
-	public static function api_url($component = '/maps/api/js') {
-		return 'http://'.Kohana::config('gmaps.api_domain').$component.'?sensor=false';
+	public static function api_url($type = 'js', $parameters = array()) {
+		if($type == 'js') {
+			return 'http://'.Kohana::config('gmaps.api_domain').'/maps/api/js?sensor=false';
+		} else {
+			return 'http://'.Kohana::config('gmaps.api_domain').'/maps/geo?'.http_build_query($parameters);
+		}
 	}
 	
 	/**
@@ -126,7 +130,7 @@ class Gmap_Core {
 			$retry_delay = Kohana::config('gmaps.retry_delay');
 
 			// Set the XML URL
-			$xml_url = Gmap::api_url('maps/geo', array('output' => 'xml', 'q' => $address), '&');
+			$xml_url = Gmap::api_url('xml', array('output' => 'xml', 'q' => $address));
 
 			// Disable error reporting while fetching the feed
 			$ER = error_reporting(~E_NOTICE);
@@ -282,14 +286,12 @@ class Gmap_Core {
 	 * Create a custom marker icon
 	 *
 	 * @chainable
-	 * @param string $name icon name
 	 * @param array $options icon options
 	 * @return object
 	 */
-	public function add_icon($name, array $options)
-	{
+	public function add_icon($options) {
 		// Add a new custom icon
-		$this->icons[] = new Gmap_Icon($name, $options);
+		$this->icons[] = $options;
 
 		return $this;
 	}
@@ -304,8 +306,8 @@ class Gmap_Core {
 	 * @param array $options marker options
 	 * @return object
 	 */
-	public function add_marker($lat, $lon, $html = '', $options = array()) {
-		$this->markers[] = array_merge(array('lat' => $lat, 'lon' => $lon, 'html' => $html), $options);
+	public function add_marker($lat, $lon, $options = array()) {
+		$this->markers[] = array_merge(array('lat' => $lat, 'lon' => $lon), $options);
 
 		return $this;
 	}
