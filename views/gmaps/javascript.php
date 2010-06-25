@@ -71,7 +71,7 @@ foreach($markers as $marker):
 ?>
 	{
 		position: new google.maps.LatLng(<?=$lat?>, <?=$lon?>),
-		map: map,
+		map:map,
 		<?=$icon?>
 		<?=substr(json_encode($marker), 1, -1)?>
 	}
@@ -94,12 +94,10 @@ foreach($markers as $marker):
 				markers[markerData[a]['category']] = [];
 			}
 			
-			markers[markerData[a]['category']].push(markerData[a])
+			markers[markerData[a]['category']].push(m)
 		} else {
-			markers['general'].push(markerData[a])
+			markers['general'].push(m)
 		}
 	}
 <?endif;?>
 }
-
-window.onload = gmap_init;
