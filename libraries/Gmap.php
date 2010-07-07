@@ -328,7 +328,6 @@ class Gmap_Core {
 			'markers' => $this->markers,
 		);
 
-		// Render the Javascript
 		return View::factory($template, $data)->render();
 	}
 }

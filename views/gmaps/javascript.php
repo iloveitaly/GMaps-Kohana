@@ -65,7 +65,7 @@ foreach($markers as $marker):
 		$icon = '';
 	}
 	
-	// we don't want lat
+	// we don't want lat & lon to be included with the other options
 	unset($marker['lat']);
 	unset($marker['lon']);
 ?>
@@ -78,7 +78,7 @@ foreach($markers as $marker):
 <?endforeach;?>
 	];
 
-	markers = {general:[]};
+	markers = {general:[], all:[]};
 	
 	for(var a = 0, m; a < markerData.length; a++) {
 		m = new google.maps.Marker(markerData[a]);
@@ -96,8 +96,10 @@ foreach($markers as $marker):
 			
 			markers[markerData[a]['category']].push(m)
 		} else {
-			markers['general'].push(m)
+			markers['general'].push(m);
 		}
+		
+		markers['all'].push(m);
 	}
 <?endif;?>
 }
