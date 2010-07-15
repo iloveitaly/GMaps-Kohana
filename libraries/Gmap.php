@@ -286,12 +286,13 @@ class Gmap_Core {
 	 * Create a custom marker icon
 	 *
 	 * @chainable
-	 * @param array $options icon options
+	 * @param array $options, should contain two key-value pairs: name, url
 	 * @return object
 	 */
 	public function add_icon($options) {
-		// Add a new custom icon
-		$this->icons[] = $options;
+		// check to make sure we aren't adding the same thing twice
+		if(!array_search_key($options['name'], $this->icons, 'name'))
+			$this->icons[] = $options;
 
 		return $this;
 	}
