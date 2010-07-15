@@ -7,7 +7,7 @@ function gmap_init() {
 	map = new google.maps.Map(document.getElementById('<?=$id?>'), {
 		center: new google.maps.LatLng(<?=$lat?>, <?=$lon?>),
 		mapTypeId: google.maps.MapTypeId.<?=$type?>,
-		<?=substr(json_encode(array_merge($options, array('zoom' => $zoom)), 1, -1)?> 
+		<?=substr(json_encode(array_merge($options, array('zoom' => $zoom))), 1, -1)?> 
 	});
 
 <?
