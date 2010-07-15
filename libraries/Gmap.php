@@ -307,8 +307,8 @@ class Gmap_Core {
 	 * @param array $options marker options
 	 * @return object
 	 */
-	public function add_marker($lat, $lon, $options = array()) {
-		$this->markers[] = array_merge(array('lat' => $lat, 'lon' => $lon), $options);
+	public function add_marker($options) {
+		$this->markers[] = $options;
 
 		return $this;
 	}
