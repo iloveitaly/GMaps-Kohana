@@ -14,7 +14,7 @@ class Gmap_Core {
 	// Map settings
 	protected $id;
 	protected $options;
-	protected $center;
+	public $center;
 	protected $control;
 	protected $type_control = FALSE;
 

@@ -70,7 +70,6 @@ foreach($markers as $marker):
 ?>
 	{
 		position: new google.maps.LatLng(<?=$lat?>, <?=$lon?>),
-		map:map,
 		<?=$icon?>
 		<?=substr(json_encode($marker), 1, -1)?>
 	}
