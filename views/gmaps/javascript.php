@@ -64,12 +64,20 @@ foreach($markers as $marker):
 		$icon = '';
 	}
 	
+	if(isset($marker['map'])) {
+		$mapVariable = 'map:'.$marker['map'].",\n";
+		unset($marker['map']);
+	} else {
+		$mapVariable = '';
+	}
+	
 	// we don't want lat & lon to be included with the other options
 	unset($marker['lat']);
 	unset($marker['lon']);
 ?>
 	{
 		position: new google.maps.LatLng(<?=$lat?>, <?=$lon?>),
+		<?=$mapVariable?>
 		<?=$icon?>
 		<?=substr(json_encode($marker), 1, -1)?>
 	}
