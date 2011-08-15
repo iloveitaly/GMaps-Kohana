@@ -15,7 +15,7 @@ if(!empty($icons)):
 	foreach($icons as $icon):
 		// load the icon and grab the sizes if they aren't specified
 		if(empty($icon['size'])) {
-			$icon['size'] = getimagesize(DOCROOT.$icon['url']);
+			$icon['size'] = getimagesize(join_paths(DOCROOT, $icon['url']));
 		}
 		
 		// calculate the position, default to center
